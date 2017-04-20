@@ -1,0 +1,193 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+    >yuicompressor (v2.4.8)</a>
+</h1>
+<h4>YUICompressor CLI and Node.js require</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.yuicompressor">module yuicompressor</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.yuicompressor.compress">
+            function <span class="apidocSignatureSpan">yuicompressor.</span>compress
+            <span class="apidocSignatureSpan">(str, options, callback)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.yuicompressor.compressString">
+            function <span class="apidocSignatureSpan">yuicompressor.</span>compressString
+            <span class="apidocSignatureSpan">(str, options, callback)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <span class="apidocSignatureSpan">string <span class="apidocSignatureSpan">yuicompressor.</span>jar</span>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.yuicompressor" id="apidoc.module.yuicompressor">module yuicompressor</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.yuicompressor.compress" id="apidoc.element.yuicompressor.compress">
+        function <span class="apidocSignatureSpan">yuicompressor.</span>compress
+        <span class="apidocSignatureSpan">(str, options, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">compress = function (str, options, callback) {
+    if (typeof options === &#x27;function&#x27;) {
+        callback = options;
+        options = defaultOptions;
+    }
+
+    getString(str, function(err, str, options) {
+
+        compressString(str, options, callback);
+
+    }, options);
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+npm i yuicompressor
+
+```javascript
+
+var compressor = require(&#x27;yuicompressor&#x27;);
+
+compressor.<span class="apidocCodeKeywordSpan">compress</span>(&#x27;/path/to/file or String of JS&#x27;, {
+//Compressor Options:
+charset: &#x27;utf8&#x27;,
+type: &#x27;js&#x27;,
+nomunge: true,
+&#x27;line-break&#x27;: 80
+}, function(err, data, extra) {
+//err   If compressor encounters an error, it&#x27;s stderr will be here
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.yuicompressor.compressString" id="apidoc.element.yuicompressor.compressString">
+        function <span class="apidocSignatureSpan">yuicompressor.</span>compressString
+        <span class="apidocSignatureSpan">(str, options, callback)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">compressString = function (str, options, callback) {
+    //Now we have a string, spawn and pipe it in.
+
+    options = filterOptions(options);
+
+    var args = [
+        &#x27;-jar&#x27;,
+        exports.jar
+    ], buffer = &#x27;&#x27;, errBuffer = &#x27;&#x27;, child;
+
+    Object.keys(options).forEach(function(key) {
+        args.push(&#x27;--&#x27; + key);
+        if (options[key] &#x26;&#x26; options[key] !== true) {
+            args.push(options[key]);
+        }
+    });
+
+    child = spawn(&#x27;java&#x27;, args, {
+        stdio: [&#x27;pipe&#x27;, &#x27;pipe&#x27;, &#x27;pipe&#x27;]
+    });
+
+    child.stdin.write(str);
+    child.stdin.end();
+
+    child.stdout.on(&#x27;data&#x27;, function(chunk) {
+        buffer += chunk;
+    });
+    child.stderr.on(&#x27;data&#x27;, function(chunk) {
+        errBuffer += chunk;
+    });
+
+    child.on(&#x27;exit&#x27;, function() {
+        var err = null;
+        if (errBuffer.indexOf(&#x27;[ERROR]&#x27;) &#x3e; -1) {
+            err = errBuffer;
+        }
+        callback(err, buffer, errBuffer);
+    });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
